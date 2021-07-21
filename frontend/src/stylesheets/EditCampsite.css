@@ -1,0 +1,14 @@
+.centered-single-container {
+    max-width: 45vw;
+    border: black;
+    border-width: medium;
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: whitesmoke;
+    margin-top: 20px;
+    margin-left: 20px;
+    height: 700px;
+}

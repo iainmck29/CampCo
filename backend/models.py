@@ -7,7 +7,8 @@ import json
 database_name = "campsites"
 database_path = os.environ.get('DATABASE_URL')
 
-database_test_path = "postgres://{}/{}".format('localhost:5432', database_name)
+database_test_path = "postgresql://{}/{}".format(
+    'localhost:5432', database_name)
 
 db = SQLAlchemy()
 
@@ -76,7 +77,6 @@ class Campsite(db.Model):
     price = db.Column(db.Integer)
 
     def __init__(self, address, tents, campervans, electricity, toilet, price):
-        self.id = id
         self.address = address
         self.tents = tents
         self.campervans = campervans

@@ -1,0 +1,34 @@
+.App-header {
+    background-color: #282c34;
+    display: flex;
+    flex-direction: left;
+    align-items: center;
+    justify-content: left;
+    font-size: 16px;
+    color: white;
+    padding-left: 20px;
+  }
+
+  .App-logo {
+    background-color: #282c34;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: left;
+    padding-left: 20px;
+  }
+
+  .container {
+      display: flex;
+      flex-direction: left;
+      justify-content: space-between;
+      align-items: flex-end;
+      background-color: #282c34;
+      color: white;
+  }
+
+  h2 {
+      padding-left: 40px;
+      padding-right: 40px;
+  }

@@ -1,0 +1,56 @@
+.container {
+    max-width: 45vw;
+    border: black;
+    border-width: medium;
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background: whitesmoke;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.campsite-description {
+    color: black;
+    padding-left: 20px;
+
+}
+
+.info-divider {
+    padding-left: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+}
+
+.thumbnail {
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+
+}
+
+.text-info-div {
+    color: black;
+
+}
+
+.campsite-link {
+    text-decoration: none;
+}
+
+.edit-button {
+    margin-left: 20px;
+    padding: 5px 20px;
+    font-size: 16px;
+    background-color: skyblue;
+}
+
+.delete-button {
+    margin-left: 20px;
+    padding: 5px 20px;
+    font-size: 16px;
+    background-color: tomato;
+}

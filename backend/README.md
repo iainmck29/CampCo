@@ -6,13 +6,11 @@ This app has been created to allow landowners to advertise their land to would-b
 Task: Structure app correctly to begin with development
     1. Find out how to structure app backend properly.
         - Follow other users who have used a react frontend for their application.
-    
-    Page structure:
 
-    - Index
-    - Login
-    - Logout
-    - 
+    2. Models completed
+
+    3. Work in TDD. Write tests for endpoint and ensure they pass/fail as expected
+        -Use Postman to test each endpoint as you go.
 
 
 Endpoints:

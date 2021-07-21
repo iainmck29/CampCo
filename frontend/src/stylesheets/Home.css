@@ -1,0 +1,29 @@
+.hero-section {
+    display: flex;
+    flex-direction: row;
+
+}
+
+.hero-image {
+    height: 93vh;
+    max-width: 60vw;
+    object-fit: cover;
+}
+
+.hero-text {
+    font-size: 150px;
+    padding-left: 20px;
+    background-color:whitesmoke
+}
+
+.cta {
+    font-size: 24px;
+    background-color: springgreen;
+    width: 300px;
+    border-radius: 15px;
+    color: white;
+    text-decoration: 'none';
+    text-align: center;
+    padding: 20px;
+    font-weight: 600;
+}
