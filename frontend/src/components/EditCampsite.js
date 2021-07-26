@@ -33,19 +33,20 @@ class EditCampsite extends React.Component {
     handleUpdate = (e) => {
         e.preventDefault();
         const { address, tents, campervans, electricity, toilet, price } = this.state
-        const data = {
-            address: address,
-            tents: tents,
-            campervans: campervans,
-            electricity: electricity,
-            toilet: toilet,
-            price: price
-        }
 
         $.ajax({
             url: window.location.pathname,
-            type: 'PATCH',
-            data: JSON.stringify(data),
+            type: "PATCH",
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                address: address,
+                tents: tents,
+                campervans: campervans,
+                electricity: electricity,
+                toilet: toilet,
+                price: price
+            }),
             success: (result) => {
                 alert('success!')
             },
@@ -68,6 +69,7 @@ class EditCampsite extends React.Component {
 
         return (
             <div className='container-2'>
+                <h1>UPDATE YOUR CAMPSITE INFO</h1>
                 <form onSubmit={this.handleUpdate} className="add-campsite-form">
                     <input type="text" value={address} onChange={this.handleChange} className="add-campsite-form-input" placeholder="Campsite address" name="address" />
                     <div className='checkbox-label'>

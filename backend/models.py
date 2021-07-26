@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import json
 
+
 database_name = "campsites"
 database_path = os.environ.get('DATABASE_URL')
 
@@ -18,7 +19,6 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    migrate = Migrate(app, db)
     # db.create_all()
 
 
@@ -27,19 +27,21 @@ def setup_test_db(app, database_path=database_test_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
+    migrate = Migrate(app, db)
+    # db.create_all()
 
 
 class Landowner(db.Model):
     __tablename__ = 'landowners'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), nullable=False)
-    phone = db.Column(db.Integer)
+    phone = db.Column(db.String())
     email = db.Column(db.String())
     image_link = db.Column(db.String())
+    campsites = db.relationship(
+        "Campsite", backref="landowner", cascade="all, delete")
 
-    def __init__(self, id, name, phone, email, image_link):
-        self.id = id
+    def __init__(self, name, phone, email, image_link):
         self.name = name
         self.phone = phone
         self.email = email
@@ -75,6 +77,10 @@ class Campsite(db.Model):
     electricity = db.Column(db.Boolean, default=False)
     toilet = db.Column(db.Boolean, default=False)
     price = db.Column(db.Integer)
+    region = db.Column(db.String())
+    description = db.Column(db.String())
+    campsite_image = db.Column(db.String())
+    campsite_owner = db.Column(db.Integer, db.ForeignKey('landowners.id'))
 
     def __init__(self, address, tents, campervans, electricity, toilet, price):
         self.address = address

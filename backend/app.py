@@ -3,6 +3,7 @@ import sys
 from flask import Flask, request, jsonify, abort
 import json
 from flask_cors import CORS
+from auth import AuthError, requires_auth
 
 from models import setup_test_db, Landowner, Campsite
 
@@ -26,15 +27,16 @@ def create_app(test_config=None):
     CORS(app)
     setup_test_db(app)
 
-    # @app.after_request
-    # def after_request(response):
-    #     response.headers.add('Access-Control-Allow-Headers',
-    #                          'Content-Type,Authorization,True')
-    #     response.headers.add('Access-Control-Allow-Methods',
-    #                          'GET,POST,PATCH,DELETE,OPTIONS')
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type,Authorization,True')
+        response.headers.add('Access-Control-Allow-Methods',
+                             'GET,POST,PATCH,DELETE,OPTIONS')
 
     @app.route('/add', methods=['POST'])
-    def add_new_campsite():
+    @requires_auth('post:campsite')
+    def add_new_campsite(payload):
         body = request.get_json()
 
         address = body.get('address', None)
@@ -58,7 +60,8 @@ def create_app(test_config=None):
         })
 
     @app.route('/campsites', methods=['GET'])
-    def view_campsites():
+    @requires_auth('get:campsite')
+    def view_campsites(payload):
         campsites = Campsite.query.order_by(Campsite.id).all()
         # current_campsites = paginate_selection(request, campsites)
 
@@ -87,6 +90,7 @@ def create_app(test_config=None):
     def edit_campsite(campsite_id):
         try:
             body = request.get_json()
+            print(body)
             # unpack data
             address = body.get('address')
             tents = body.get('tents')
@@ -96,6 +100,7 @@ def create_app(test_config=None):
             price = body.get('price')
 
             campsite = Campsite.query.get(campsite_id)
+
             campsite.address = address
             campsite.tents = tents
             campsite.campervans = campervans
@@ -107,6 +112,7 @@ def create_app(test_config=None):
 
         except Exception as e:
             print(sys.exc_info)
+            abort(400)
 
         return({
             'success': True,
@@ -114,7 +120,8 @@ def create_app(test_config=None):
         })
 
     @app.route('/campsites/<int:campsite_id>', methods=['DELETE'])
-    def delete_campsite(campsite_id):
+    @requires_auth('delete:campsite')
+    def delete_campsite(payload, campsite_id):
         campsite = Campsite.query.get(campsite_id)
         if campsite is None:
             abort(404)
@@ -126,27 +133,68 @@ def create_app(test_config=None):
             'deleted': campsite_id
         })
 
-    # @app.route('/campsites/<int:campsite_id>', methods=['DELETE'])
-    # def delete_campsite(campsite_id):
-    #     campsite = Campsite.query.get(campsite_id)
-    #     if campsite is None:
-    #         abort(404)
+    @app.route('/landowners', methods=['GET'])
+    @requires_auth('get:landowner')
+    def view_landowners(payload):
+        landowners = Landowner.query.order_by(Landowner.id).all()
+        # current_campsites = paginate_selection(request, campsites)
 
-    #     campsite_data = []
+        if len(landowners) == 0:
+            abort(404)
 
-    #     campsite_data.append({
-    #         'id': campsite.id,
-    #         'address': campsite.address,
-    #         'tents': campsite.tents,
-    #         'campervans': campsite.campervans,
-    #         'electricity': campsite.electricity,
-    #         'toilet': campsite.toilet,
-    #         'price': campsite.price
-    #     })
+        landowner_data = []
+        for landowner in landowners:
+            landowner_data.append({
+                'id': landowner.id,
+                'name': landowner.name,
+                'phone': landowner.phone,
+                'email': landowner.email,
+                'image_link': landowner.image_link,
+            })
 
-    #     return jsonify({
-    #         'success': True,
-    #         'campsite': campsite_data
-    #     })
+        return jsonify({
+            'success': True,
+            'landowners': landowner_data,
+            'total_landowners': len(landowners)
+        })
+
+    @app.route('/landowners/<int:landowner_id>', methods=['DELETE'])
+    @requires_auth('delete:landowner')
+    def delete_landowner(payload, landowner_id):
+        landowner = Landowner.query.get(landowner_id)
+
+        if landowner is None:
+            abort(404)
+
+        landowner.delete()
+
+        return jsonify({
+            'success': True,
+            'deleted': landowner_id
+        })
+
+    @app.route('/landowners/add', methods=['POST'])
+    @requires_auth('post:landowner')
+    def add_new_landowner(payload):
+        body = request.get_json()
+
+        name = body.get('name', None)
+        phone = body.get('phone')
+        email = body.get('email')
+        image_link = body.get('image_link')
+
+        try:
+            new_landowner = Landowner(name=name, phone=phone, email=email,
+                                      image_link=image_link)
+            print(new_landowner)
+            new_landowner.insert()
+
+        except Exception as e:
+            print(e)
+            abort(403)
+
+        return jsonify({
+            "success": True
+        })
 
     return app

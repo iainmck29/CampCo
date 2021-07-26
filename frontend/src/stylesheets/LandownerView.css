@@ -1,0 +1,35 @@
+.container {
+    max-width: 45vw;
+    border: black;
+    border-width: medium;
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background: whitesmoke;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.landowner-description {
+    color: black;
+    padding-left: 20px;
+
+}
+
+.thumbnail {
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+
+}
+
+.text-info-div {
+    color: black;
+
+}
+
+.landowner-link {
+    text-decoration: none;
+}
