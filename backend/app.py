@@ -2,7 +2,7 @@ import os
 import sys
 from flask import Flask, request, jsonify, abort
 import json
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from auth import AuthError, requires_auth
 
 from models import setup_test_db, Landowner, Campsite
@@ -27,14 +27,15 @@ def create_app(test_config=None):
     CORS(app)
     setup_test_db(app)
 
-    @app.after_request
-    def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers',
-                             'Content-Type,Authorization,True')
-        response.headers.add('Access-Control-Allow-Methods',
-                             'GET,POST,PATCH,DELETE,OPTIONS')
+    # @app.after_request
+    # def after_request(response):
+    #     response.headers.add('Access-Control-Allow-Headers',
+    #                          'Content-Type,Authorization,True')
+    #     response.headers.add('Access-Control-Allow-Methods',
+    #                          'GET,POST,PATCH,DELETE,OPTIONS')
 
     @app.route('/add', methods=['POST'])
+    @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('post:campsite')
     def add_new_campsite(payload):
         body = request.get_json()
@@ -52,7 +53,6 @@ def create_app(test_config=None):
             new_campsite.insert()
 
         except Exception as e:
-            print(e)
             abort(403)
 
         return jsonify({
@@ -60,6 +60,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/campsites', methods=['GET'])
+    @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('get:campsite')
     def view_campsites(payload):
         campsites = Campsite.query.order_by(Campsite.id).all()
@@ -87,6 +88,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/campsites/<int:campsite_id>/edit', methods=['PATCH'])
+    @cross_origin(headers=['Content-Type', 'Authorization'])
     def edit_campsite(campsite_id):
         try:
             body = request.get_json()
@@ -120,6 +122,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/campsites/<int:campsite_id>', methods=['DELETE'])
+    @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('delete:campsite')
     def delete_campsite(payload, campsite_id):
         campsite = Campsite.query.get(campsite_id)
@@ -134,6 +137,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/landowners', methods=['GET'])
+    @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('get:landowner')
     def view_landowners(payload):
         landowners = Landowner.query.order_by(Landowner.id).all()
@@ -159,6 +163,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/landowners/<int:landowner_id>', methods=['DELETE'])
+    @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('delete:landowner')
     def delete_landowner(payload, landowner_id):
         landowner = Landowner.query.get(landowner_id)
@@ -174,6 +179,7 @@ def create_app(test_config=None):
         })
 
     @app.route('/landowners/add', methods=['POST'])
+    @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('post:landowner')
     def add_new_landowner(payload):
         body = request.get_json()
@@ -198,3 +204,9 @@ def create_app(test_config=None):
         })
 
     return app
+
+
+# app = create_app()
+
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0')
