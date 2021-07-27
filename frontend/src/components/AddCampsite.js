@@ -35,7 +35,7 @@ class AddCampsite extends React.Component {
         e.preventDefault();
         const { address, tents, campervans, electricity, toilet, price } = this.state
         $.ajax({
-            url: '/add',
+            url: '/add-campsite',
             type: "POST",
             dataType: 'json',
             contentType: 'application/json',

@@ -34,7 +34,7 @@ def create_app(test_config=None):
     #     response.headers.add('Access-Control-Allow-Methods',
     #                          'GET,POST,PATCH,DELETE,OPTIONS')
 
-    @app.route('/add', methods=['POST'])
+    @app.route('/add-campsite', methods=['POST'])
     @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('post:campsite')
     def add_new_campsite(payload):
@@ -57,11 +57,12 @@ def create_app(test_config=None):
 
         return jsonify({
             "success": True,
+            "campsite": new_campsite.id
         })
 
     @app.route('/campsites', methods=['GET'])
     @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth('get:campsite')
+    @requires_auth('get:campsites')
     def view_campsites(payload):
         campsites = Campsite.query.order_by(Campsite.id).all()
         # current_campsites = paginate_selection(request, campsites)
@@ -200,7 +201,8 @@ def create_app(test_config=None):
             abort(403)
 
         return jsonify({
-            "success": True
+            "success": True,
+            "landowner": new_landowner.id
         })
 
     return app

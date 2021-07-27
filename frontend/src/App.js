@@ -23,7 +23,7 @@ class App extends React.Component {
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/campsites" exact component={Campsites} />
-          <Route path="/add" component={AddCampsite} />
+          <Route path="/add-campsite" component={AddCampsite} />
           <Route path="/campsites/:campsite_id/edit" component={EditCampsite} />
           <Route path="/logout" component={Logout} />
           <Route path="/login" component={LoginButton} />

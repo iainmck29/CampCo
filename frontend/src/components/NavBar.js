@@ -17,7 +17,7 @@ class NavBar extends React.Component {
                 <h1 onClick={() => { this.navTo('') }}>Camp&Co</h1>
                 <h2 onClick={() => { this.navTo('') }}>Home</h2>
                 <h2 onClick={() => { this.navTo('/campsites') }}>View Campsites</h2>
-                <h2 onClick={() => { this.navTo('/add') }}>Add Campsite</h2>
+                <h2 onClick={() => { this.navTo('/add-campsite') }}>Add Campsite</h2>
                 <h2 onClick={() => { this.navTo('/landowners') }}>View Landowners</h2>
                 <h2 onClick={() => { this.navTo('/landowners/add') }}>Register</h2>
 
