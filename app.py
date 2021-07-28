@@ -3,9 +3,9 @@ import sys
 from flask import Flask, request, jsonify, abort
 import json
 from flask_cors import CORS, cross_origin
-from .backend.auth import AuthError, requires_auth
+from auth import AuthError, requires_auth
 
-from .backend.models import setup_test_db, Landowner, Campsite
+from models import setup_test_db, Landowner, Campsite
 
 CAMPSITES_PER_PAGE = 10
 
