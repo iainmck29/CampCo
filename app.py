@@ -3,9 +3,9 @@ import sys
 from flask import Flask, request, jsonify, abort
 import json
 from flask_cors import CORS, cross_origin
-from auth import AuthError, requires_auth
+from .auth import AuthError, requires_auth
 
-from models import setup_test_db, Landowner, Campsite
+from .models import setup_test_db, Landowner, Campsite
 
 CAMPSITES_PER_PAGE = 10
 
@@ -15,6 +15,13 @@ def create_app(test_config=None):
     app = Flask(__name__)
     CORS(app)
     setup_test_db(app)
+
+    @app.route('/')
+    def index():
+        return jsonify({
+            "success": True,
+            "Message": "Welcome to the app!"
+        })
 
     @app.route('/add-campsite', methods=['POST'])
     @cross_origin(headers=['Content-Type', 'Authorization'])
