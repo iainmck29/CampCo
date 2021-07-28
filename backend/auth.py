@@ -7,7 +7,7 @@ import os
 
 AUTH0_DOMAIN = "fsnd-29.eu.auth0.com"
 ALGORITHMS = ['RS256']
-API_AUDIENCE = "Camp&co"
+API_AUDIENCE = "camp"
 
 
 class AuthError(Exception):

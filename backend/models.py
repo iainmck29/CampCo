@@ -19,7 +19,7 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    # db.create_all()
+    migrate = Migrate(app, db)
 
 
 def setup_test_db(app, database_path=database_test_path):
@@ -27,7 +27,6 @@ def setup_test_db(app, database_path=database_test_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    migrate = Migrate(app, db)
     # db.create_all()
 
 
@@ -71,7 +70,7 @@ class Landowner(db.Model):
 class Campsite(db.Model):
     __tablename__ = 'campsites'
     id = db.Column(db.Integer, primary_key=True)
-    address = db.Column(db.String())
+    address = db.Column(db.String(), nullable=False)
     tents = db.Column(db.Boolean, default=False)
     campervans = db.Column(db.Boolean, default=False)
     electricity = db.Column(db.Boolean, default=False)
@@ -80,15 +79,20 @@ class Campsite(db.Model):
     region = db.Column(db.String())
     description = db.Column(db.String())
     campsite_image = db.Column(db.String())
-    campsite_owner = db.Column(db.Integer, db.ForeignKey('landowners.id'))
+    campsite_owner = db.Column(
+        db.Integer, db.ForeignKey('landowners.id'), nullable=False)
 
-    def __init__(self, address, tents, campervans, electricity, toilet, price):
+    def __init__(self, address, tents, campervans, electricity, toilet, price, region, description, campsite_image, campsite_owner):
         self.address = address
         self.tents = tents
         self.campervans = campervans
         self.electricity = electricity
         self.toilet = toilet
         self.price = price
+        self.region = region
+        self.description = description
+        self.campsite_image = campsite_image
+        self.campsite_owner = campsite_owner
 
     def insert(self):
         db.session.add(self)
@@ -109,5 +113,16 @@ class Campsite(db.Model):
             'campervans': self.campervans,
             'electricity': self.electricity,
             'toilet': self.toilet,
-            'price': self.price
+            'price': self.price,
+            'region': self.region,
+            'description': self.description,
+            'campsite_image': self.campsite_image,
+            'campsite_owner': self.campsite_owner
         }
+
+
+test_campsite = Campsite(address="new address", tents=True, campervans=False,
+                         electricity=True, toilet=True, price=40, region="region", description="description", campsite_image="campsite_image", campsite_owner="campsite_owner")
+
+test_owner = Landowner(name="name", phone="12345", email="email@test.com",
+                       image_link="image_link.com")

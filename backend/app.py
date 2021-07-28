@@ -10,62 +10,49 @@ from models import setup_test_db, Landowner, Campsite
 CAMPSITES_PER_PAGE = 10
 
 
-# def paginate_selection(request, selection):
-#     page = request.args.get('page', 1, type=int)
-#     start = (page - 1) * CAMPSITES_PER_PAGE
-#     end = page + CAMPSITES_PER_PAGE
-
-#     campsites = [campsite.format() for campsite in selection]
-#     current_campsites = campsites[start:end]
-
-#     return current_campsites
-
-
 def create_app(test_config=None):
     # Create and configure app
     app = Flask(__name__)
     CORS(app)
     setup_test_db(app)
 
-    # @app.after_request
-    # def after_request(response):
-    #     response.headers.add('Access-Control-Allow-Headers',
-    #                          'Content-Type,Authorization,True')
-    #     response.headers.add('Access-Control-Allow-Methods',
-    #                          'GET,POST,PATCH,DELETE,OPTIONS')
-
     @app.route('/add-campsite', methods=['POST'])
     @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('post:campsite')
     def add_new_campsite(payload):
-        body = request.get_json()
-
-        address = body.get('address', None)
+        body = request.json
+        address = body.get('address')
         tents = body.get('tents')
         campervans = body.get('campervans')
         electricity = body.get('electricity')
         toilet = body.get('toilet')
         price = body.get('price', 0)
+        region = body.get('region')
+        description = body.get('description')
+        campsite_image = body.get('campsite_image')
+        campsite_owner = body.get('campsite_owner')
 
         try:
             new_campsite = Campsite(address=address, tents=tents, campervans=campervans,
-                                    electricity=electricity, toilet=toilet, price=price)
+                                    electricity=electricity, toilet=toilet, price=price, region=region, description=description, campsite_image=campsite_image, campsite_owner=campsite_owner)
             new_campsite.insert()
 
         except Exception as e:
-            abort(403)
+            print(sys.exc_info())
+            return jsonify({
+                "success": False,
+                "message": "Missing details"
+            }), 422
 
         return jsonify({
-            "success": True,
-            "campsite": new_campsite.id
-        })
+            "success": True
+        }), 200
 
     @app.route('/campsites', methods=['GET'])
     @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth('get:campsites')
     def view_campsites(payload):
         campsites = Campsite.query.order_by(Campsite.id).all()
-        # current_campsites = paginate_selection(request, campsites)
 
         if len(campsites) == 0:
             abort(404)
@@ -101,6 +88,10 @@ def create_app(test_config=None):
             electricity = body.get('electricity')
             toilet = body.get('toilet')
             price = body.get('price')
+            region = body.get('region')
+            description = body.get('description')
+            campsite_image = body.get('campsite_image')
+            campsite_owner = body.get('campsite_owner')
 
             campsite = Campsite.query.get(campsite_id)
 
@@ -110,12 +101,19 @@ def create_app(test_config=None):
             campsite.electricity = electricity
             campsite.toilet = toilet
             campsite.price = price
+            campsite.region = region
+            campsite.description = description
+            campsite.campsite_image = campsite_image
+            campsite.campsite_owner = campsite_owner
 
             campsite.update()
 
         except Exception as e:
-            print(sys.exc_info)
-            abort(400)
+            print(sys.exc_info())
+            return jsonify({
+                'success': False,
+                'Message': 'Unable to update'
+            }), 400
 
         return({
             'success': True,
@@ -142,7 +140,6 @@ def create_app(test_config=None):
     @requires_auth('get:landowner')
     def view_landowners(payload):
         landowners = Landowner.query.order_by(Landowner.id).all()
-        # current_campsites = paginate_selection(request, campsites)
 
         if len(landowners) == 0:
             abort(404)
@@ -170,7 +167,10 @@ def create_app(test_config=None):
         landowner = Landowner.query.get(landowner_id)
 
         if landowner is None:
-            abort(404)
+            return jsonify({
+                'success': False,
+                'message': 'Could not find owner'
+            }), 404
 
         landowner.delete()
 
@@ -206,9 +206,3 @@ def create_app(test_config=None):
         })
 
     return app
-
-
-# app = create_app()
-
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0')
