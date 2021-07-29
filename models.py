@@ -82,7 +82,10 @@ class Campsite(db.Model):
     campsite_owner = db.Column(
         db.Integer, db.ForeignKey('landowners.id'), nullable=False)
 
-    def __init__(self, address, tents, campervans, electricity, toilet, price, region, description, campsite_image, campsite_owner):
+    def __init__(self, address, tents,
+                 campervans, electricity, toilet,
+                 price, region, description,
+                 campsite_image, campsite_owner):
         self.address = address
         self.tents = tents
         self.campervans = campervans
@@ -122,7 +125,11 @@ class Campsite(db.Model):
 
 
 test_campsite = Campsite(address="new address", tents=True, campervans=False,
-                         electricity=True, toilet=True, price=40, region="region", description="description", campsite_image="campsite_image", campsite_owner="campsite_owner")
+                         electricity=True, toilet=True,
+                         price=40, region="region",
+                         description="description",
+                         campsite_image="campsite_image",
+                         campsite_owner="campsite_owner")
 
 test_owner = Landowner(name="name", phone="12345", email="email@test.com",
                        image_link="image_link.com")

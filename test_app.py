@@ -4,7 +4,9 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from app import create_app
-from models import setup_test_db, Landowner, Campsite, test_campsite, test_owner
+from models import (setup_test_db,
+                    Landowner, Campsite,
+                    test_campsite, test_owner)
 
 
 load_dotenv()
@@ -61,8 +63,12 @@ class AppTestCase(unittest.TestCase):
     # Test add landowner for website manager
 
     def test_add_landowner(self):
-        res = self.client().post('/landowners/add', json={'name': "John Doe", 'phone': "12345678",
-                                                          'email': "abc@test.com", 'image-link': "test.image"}, headers=get_headers(MANAGER_TOKEN))
+        res = self.client().post('/landowners/add',
+                                 json={'name': "John Doe",
+                                       'phone': "12345678",
+                                       'email': "abc@test.com",
+                                       'image-link': "test.image"},
+                                 headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['landowner'])
@@ -70,19 +76,25 @@ class AppTestCase(unittest.TestCase):
     # Test add landowner for a camp owner
 
     def test_add_landowner_unauthorized(self):
-        res = self.client().post('/landowners/add', json={'name': "John Doe", 'phone': "12345678",
-                                                          'email': "abc@test.com", 'image-link': "test.image"}, headers=get_headers(CAMP_OWNER_TOKEN))
+        res = self.client().post('/landowners/add',
+                                 json={'name': "John Doe",
+                                       'phone': "12345678",
+                                       'email': "abc@test.com",
+                                       'image-link': "test.image"},
+                                 headers=get_headers(CAMP_OWNER_TOKEN))
         self.assertEqual(res.status_code, 500)
 
     def test_get_landowner_list(self):
-        res = self.client().get('/landowners', headers=get_headers(MANAGER_TOKEN))
+        res = self.client().get('/landowners',
+                                headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
 
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_landowners'] > 0)
 
     def test_add_new_campsite(self):
-        res = self.client().post('/add-campsite', json=self.new_campsite,
+        res = self.client().post('/add-campsite',
+                                 json=self.new_campsite,
                                  headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
 
@@ -91,7 +103,8 @@ class AppTestCase(unittest.TestCase):
 
     def test_add_new_campsite_error(self):
         res = self.client().post(
-            '/add-campsite', json={"campsite_image": "missing"}, headers=get_headers(MANAGER_TOKEN))
+            '/add-campsite', json={"campsite_image": "missing"},
+            headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
@@ -99,7 +112,8 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'unprocessable')
 
     def test_get_campsites(self):
-        res = self.client().get('/campsites', headers=get_headers(MANAGER_TOKEN))
+        res = self.client().get('/campsites',
+                                headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
 
         self.assertEqual(data['success'], True)
@@ -124,7 +138,8 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(data['updated'], 3)
 
     def test_delete_campsite(self):
-        res = self.client().delete('/campsites/14', headers=get_headers(MANAGER_TOKEN))
+        res = self.client().delete('/campsites/14',
+                                   headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
 
         self.assertEqual(data['success'], True)
@@ -133,7 +148,8 @@ class AppTestCase(unittest.TestCase):
     # Test for deleting landowners for website manager
 
     def test_delete_landowner(self):
-        res = self.client().delete('/landowners/2', headers=get_headers(MANAGER_TOKEN))
+        res = self.client().delete('/landowners/2',
+                                   headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
 
         self.assertEqual(data['success'], True)
@@ -142,7 +158,8 @@ class AppTestCase(unittest.TestCase):
     # Test for deleting landowners for camp owner
 
     def test_delete_landowner_unauthorized(self):
-        res = self.client().delete('/landowners/2', headers=get_headers(CAMP_OWNER_TOKEN))
+        res = self.client().delete('/landowners/2',
+                                   headers=get_headers(CAMP_OWNER_TOKEN))
 
         self.assertEqual(res.status_code, 500)
 

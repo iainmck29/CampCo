@@ -21,7 +21,7 @@ def create_app(test_config=None):
         return jsonify({
             "success": True,
             "Message": "Welcome to the app!"
-        })
+        }), 200
 
     @app.route('/add-campsite', methods=['POST'])
     @cross_origin(headers=['Content-Type', 'Authorization'])
@@ -40,8 +40,14 @@ def create_app(test_config=None):
         campsite_owner = body.get('campsite_owner')
 
         try:
-            new_campsite = Campsite(address=address, tents=tents, campervans=campervans,
-                                    electricity=electricity, toilet=toilet, price=price, region=region, description=description, campsite_image=campsite_image, campsite_owner=campsite_owner)
+            new_campsite = Campsite(address=address, tents=tents,
+                                    campervans=campervans,
+                                    electricity=electricity,
+                                    toilet=toilet, price=price,
+                                    region=region,
+                                    description=description,
+                                    campsite_image=campsite_image,
+                                    campsite_owner=campsite_owner)
             new_campsite.insert()
 
         except Exception as e:
@@ -49,7 +55,8 @@ def create_app(test_config=None):
             abort(422)
 
         return jsonify({
-            "success": True
+            "success": True,
+            "campsite_id": new_campsite.id
         }), 200
 
     @app.route('/campsites', methods=['GET'])

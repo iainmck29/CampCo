@@ -115,30 +115,94 @@ TODO
 #### GET '/campsites'
 
 - Returns success value, an object containing all the data of the available campsites and the total amount of campsites in the list
+- Sample:
+```
+{
+    "success": True,
+    "campsites": {
+        "id": 1,
+        "address": "30 high road"
+        "tents": True,
+        "campervans": False,
+        "electricity": True,
+        "toilet": True,
+        "price": 40
+    },
+    "total_campsites": 1
+}
+```
 
 #### POST '/add-campsite
 
 - Returns success value and the id of the newly created campsite
+- Sample:
+```
+{
+    "success": True,
+    "campsite_id": 1
+}
+```
 
 #### PATCH '/campsite/<int:campsite_id>/edit'
 
 - Returns success value and the id of the edited campsite
+- Sample:
+```
+{
+    "success": True,
+    "updated": 1
+}
+```
 
 #### DELETE '/campsites/<int:campsite_id>'
 
 - Returns the success value and the id of the recently deleted campsite
+- Sample:
+```
+{
+    "success": True,
+    "deleted": 1
+}
+```
 
 #### GET '/landowners'
 
 - Returns the success value, the data for the available landowners and the total amount of landowners
+- Sample:
+```
+{
+    "success": True,
+    "landowers": {
+        "id": 1,
+        "name": "John Doe",
+        "email": "abc@test.com",
+        "image_link": "landowner.link"
+    },
+    "total_landowners": 1
+}
+```
 
 #### DELETE '/landowners/<int:landowner_id>
 
 - Returns the success value and the id of the recently deleted landowner
+- Sample:
+```
+{
+    "success": True,
+    "deleted": 1
+}
+```
 
 #### POST '/landowners/add'
 
 - Returns the success value and the id of the newly created landowner
+- Sample:
+```
+{
+    "success": True,
+    "landowner": 1
+}
+```
 
 
 ### Error Handling
