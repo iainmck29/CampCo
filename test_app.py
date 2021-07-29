@@ -10,6 +10,7 @@ from models import setup_test_db, Landowner, Campsite, test_campsite, test_owner
 load_dotenv()
 
 MANAGER_TOKEN = os.environ['MANAGER_TOKEN']
+CAMP_OWNER_TOKEN = os.environ['CAMP_OWNER_TOKEN']
 
 
 def get_headers(token):
@@ -57,12 +58,21 @@ class AppTestCase(unittest.TestCase):
         # Executed after each test
         pass
 
+    # Test add landowner for website manager
+
     def test_add_landowner(self):
         res = self.client().post('/landowners/add', json={'name': "John Doe", 'phone': "12345678",
                                                           'email': "abc@test.com", 'image-link': "test.image"}, headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['landowner'])
+
+    # Test add landowner for a camp owner
+
+    def test_add_landowner_unauthorized(self):
+        res = self.client().post('/landowners/add', json={'name': "John Doe", 'phone': "12345678",
+                                                          'email': "abc@test.com", 'image-link': "test.image"}, headers=get_headers(CAMP_OWNER_TOKEN))
+        self.assertEqual(res.status_code, 500)
 
     def test_get_landowner_list(self):
         res = self.client().get('/landowners', headers=get_headers(MANAGER_TOKEN))
@@ -81,12 +91,12 @@ class AppTestCase(unittest.TestCase):
 
     def test_add_new_campsite_error(self):
         res = self.client().post(
-            '/add-campsite', json={"address": "30 broadwood"}, headers=get_headers(MANAGER_TOKEN))
+            '/add-campsite', json={"campsite_image": "missing"}, headers=get_headers(MANAGER_TOKEN))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Missing details')
+        self.assertEqual(data['message'], 'unprocessable')
 
     def test_get_campsites(self):
         res = self.client().get('/campsites', headers=get_headers(MANAGER_TOKEN))
@@ -95,30 +105,32 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_campsites'] > 0)
 
-    # def test_edit_campsites(self):
-    #     res = self.client().patch('/campsites/3/edit', json={
-    #         "address": "30 Thorne Av",
-    #         "tents": False,
-    #         "campervans": True,
-    #         "electricity": True,
-    #         "toilet": True,
-    #         "price": 20,
-    #         "region": "SOUTH",
-    #         "description": "large",
-    #         "campsite_image": "camp.uk",
-    #         "campsite_owner": 2
-    #     })
-    #     data = json.loads(res.data)
+    def test_edit_campsites(self):
+        res = self.client().patch('/campsites/3/edit', json={
+            "address": "30 Thorne Av",
+            "tents": False,
+            "campervans": True,
+            "electricity": True,
+            "toilet": True,
+            "price": 20,
+            "region": "SOUTH",
+            "description": "large",
+            "campsite_image": "camp.uk",
+            "campsite_owner": 2
+        })
+        data = json.loads(res.data)
 
-    #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(data['updated'], 3)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['updated'], 3)
 
-    # def test_delete_campsite(self):
-    #     res = self.client().delete('/campsites/14', headers=get_headers(MANAGER_TOKEN))
-    #     data = json.loads(res.data)
+    def test_delete_campsite(self):
+        res = self.client().delete('/campsites/14', headers=get_headers(MANAGER_TOKEN))
+        data = json.loads(res.data)
 
-    #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(data['deleted'], 14)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['deleted'], 14)
+
+    # Test for deleting landowners for website manager
 
     def test_delete_landowner(self):
         res = self.client().delete('/landowners/2', headers=get_headers(MANAGER_TOKEN))
@@ -126,6 +138,13 @@ class AppTestCase(unittest.TestCase):
 
         self.assertEqual(data['success'], True)
         self.assertTrue(data['deleted'])
+
+    # Test for deleting landowners for camp owner
+
+    def test_delete_landowner_unauthorized(self):
+        res = self.client().delete('/landowners/2', headers=get_headers(CAMP_OWNER_TOKEN))
+
+        self.assertEqual(res.status_code, 500)
 
 
 if __name__ == "__main__":

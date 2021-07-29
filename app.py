@@ -46,10 +46,7 @@ def create_app(test_config=None):
 
         except Exception as e:
             print(sys.exc_info())
-            return jsonify({
-                "success": False,
-                "message": "Missing details"
-            }), 422
+            abort(422)
 
         return jsonify({
             "success": True
@@ -211,6 +208,46 @@ def create_app(test_config=None):
             "success": True,
             "landowner": new_landowner.id
         })
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 404,
+            'message': 'resource not found'
+        }), 404
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            'success': False,
+            'error': 422,
+            'message': 'unprocessable'
+        }), 422
+
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            'success': False,
+            'error': 400,
+            'message': 'bad request'
+        }), 400
+
+    @app.errorhandler(405)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 405,
+            "message": "method not allowed"
+        }), 405
+
+    @app.errorhandler(401)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 401,
+            "message": "unauthorized"
+        }), 401
 
     return app
 
